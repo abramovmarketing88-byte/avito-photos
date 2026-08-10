@@ -1,35 +1,43 @@
 # Yandex Disk → Avito ImageUrls
 
-## Канонический URL
+## Канонический URL (длинный — предпочтителен)
 
 ```
-https://cloud-api.yandex.net/v1/disk/resources/download?path=/AUTOZA/Foto_mebel/{folder}/{file}.jpg
+https://cloud-api.yandex.net/v1/disk/resources/download?path=/AUTOZA/Foto_mebel_1/{relpath}
 ```
 
-Пример:
+Примеры:
 
 ```
-https://cloud-api.yandex.net/v1/disk/resources/download?path=/AUTOZA/Foto_mebel/kuhni/1.jpg
+https://cloud-api.yandex.net/v1/disk/resources/download?path=/AUTOZA/Foto_mebel_1/kuhni/heroes/al-k2-1000.jpg
+https://cloud-api.yandex.net/v1/disk/resources/download?path=/AUTOZA/Foto_mebel_1/kuhni/sets/set-01-fixcena/02-angle.jpg
 ```
 
-- `{folder}` — только ASCII/английский slug (без кириллицы и пробелов).
-- `{file}` — имя файла на Диске после синхронизации.
-- Path начинается с `/AUTOZA/Foto_mebel/...` (корень диска проекта; уточни у пользователя, если корень другой).
+- Корень по умолчанию: **`/AUTOZA/Foto_mebel_1`** (проект Foto_mebel_1).
+- Старый корень `/AUTOZA/Foto_mebel` — только если пользователь явно указал.
+- `{relpath}` — только ASCII (без кириллицы и пробелов).
+- В браузере ссылка может отдать `Unauthorized` — это нормально (техническая ссылка для автозагрузки).
+
+## Короткая форма (не дефолт)
+
+```
+yandex_disk://AUTOZA/Foto_mebel_1/kuhni/heroes/al-k2-1000.jpg
+```
+
+Инструкция Авито допускает обе формы. В этом скилле **всегда писать длинную**, если пользователь не попросил иначе («более длинная ссылка лучше работает»).
 
 ## Ячейка Excel
 
-- Колонка: `Ссылки на фото` или `ImageUrls`
-- Разделитель между URL: ` | ` (пробел, пайп, пробел)
-- Обычно **10** ссылок на объявление
-- `Названия фото` / `ImageNames` можно оставлять пустыми, если так принято в файле
+- Колонка: `ImageUrls` / `Ссылки на фото`
+- Разделитель: ` | ` (пробел, пайп, пробел)
+- Число URL: **4** (пайплайн сетов) или до **10**
+- **`ImageNames` / «Названия фото» — оставлять пустыми** при заполнении URL (инструкция Авито)
 
 ## Переименование папок RU → EN
 
-Типовой маппинг Foto_mebel:
-
 | Было (RU) | Стало (EN) |
 |-----------|------------|
-| kuhni | `kuhni` (уже EN) |
+| kuhni | `kuhni` |
 | Шкафы | `wardrobes` |
 | Прихожие | `hallways` |
 | ТВ-зоны | `tv-zones` |
@@ -37,45 +45,50 @@ https://cloud-api.yandex.net/v1/disk/resources/download?path=/AUTOZA/Foto_mebel/
 | Шпон мебель | `veneer-furniture` |
 | Стелажи, книжные полки | `shelves` |
 
-Новые папки сразу создавай на EN: `lowercase-with-hyphens`.
+Новые папки сразу: `lowercase-with-hyphens`.  
+Внутри категории: `sets/set-NN-slug/`, `heroes/{Id}.jpg`.
 
 ## Смысловой маппинг категория → папка
 
 | Лист / товар | Папка |
 |--------------|--------|
 | Кухонные гарнитуры / кухни | `kuhni` |
-| Шкафы и буфеты / гардеробные | `wardrobes` (если `shelves` пусто) |
+| Шкафы и буфеты / купе | `wardrobes` |
 | Прихожие | `hallways` |
 | ТВ-зоны / стенки | `tv-zones` |
 | Стеллажи / полки | `shelves` |
-| Столы / рабочие зоны / общая корпусная | `egger-furniture` |
-| Шпон / производство шпона (если нужна визуалка) | `veneer-furniture` |
 
-Правило: **рандомно, но по смыслам** — не класть кухни в `wardrobes`.
+Правило: **по смыслам** — не класть кухни в `wardrobes`.
 
 ## Разные первые фото
 
-- Lead (первая ссылка) = цикл/shuffle по **всем** файлам папки.
-- Цель: unique firsts ≈ число файлов в папке (или числу объявлений, если объявлений меньше).
-- **Запрещено:** ставить один файл (например `kuhni/1.jpg`) первой у всех объявлений категории.
-
-Алгоритм:
-
-1. `lead_cycle = shuffle(files)`
-2. Для i-го объявления: `first = lead_cycle[i % len]`
-3. Остальные 9 — sample из папки без `first` (если файлов мало — добор с повторами только в хвосте)
+- Lead = **`{kind}/heroes/{Id}.jpg`** (уникальный файл на объявление) — целевой способ.
+- Fallback без heroes: цикл/shuffle по файлам папки; **запрещено** один `1.jpg` первым у всех.
 
 ## Что не трогать
 
 - Объявления со статусом **Активно** из старого экспорта
-- Строки без маркера «новое» (например без `msk2026-`), если пользователь так сказал
-- Фото услуг, которые пользователь просил оставить как были
+- Строки без маркера «новое», если пользователь так сказал
+- Фото услуг без явного запроса
+
+## Синхронизация
+
+Локальный проект ↔ Диск:
+
+`…/Foto_mebel_1/kuhni/...` → `/AUTOZA/Foto_mebel_1/kuhni/...`  
+`…/Foto_mebel_1/wardrobes/...` → `/AUTOZA/Foto_mebel_1/wardrobes/...`
+
+Яндекс.Диск должен быть **привязан** в настройках автозагрузки профиля Авито.
 
 ## Проверка
 
 ```text
-- все обновлённые URL начинаются с https://cloud-api.yandex.net/v1/disk/resources/download?path=
-- ровно 10 URL на новую строку
+- URL начинаются с https://cloud-api.yandex.net/v1/disk/resources/download?path=
+- path содержит /AUTOZA/Foto_mebel_1/ (или согласованный корень)
 - path без кириллицы
-- Counter(first_filename) не схлопнут в 1 ключ на всю категорию
+- ImageNames пусто на обновлённых строках
+- число URL = 4 или 10 (как договорились)
+- Counter(first_filename) ≈ числу объявлений (heroes), не 1 ключ на категорию
 ```
+
+Валидатор: `scripts/validate_image_urls.py --expect 4`
