@@ -1,12 +1,10 @@
 ---
 name: avito-photos
 description: >-
-  Готовит фото и ссылки для автозагрузки Авито через Яндекс.Диск: EN-папки,
-  длинный URL cloud-api, сеты 10×4 + уникальный hero на объявление (заголовок
-  из строки Excel), цикл сетов 1→10, ImageUrls с ` | `, ImageNames пусто;
-  CTR-оверлеи 4:3 1920×1440, текст 10–25% в safe-zone 1300×1300. Use when
-  Авито фото, ImageUrls, Яндекс.Диск, CTR оверлеи, 4:3, 1920x1440, сеты,
-  heroes, Foto_mebel_1, kuhni/wardrobes.
+  Фото и ImageUrls для автозагрузки Авито: Яндекс.Диск (cloud-api), EN-папки,
+  сеты 10×4 + уникальный hero, CTR-оверлеи 4:3 1920×1440 (хук+CTA, не полный Title),
+  товары и услуги. Use when Авито фото, ImageUrls, Яндекс.Диск, CTR оверлеи,
+  heroes, sets, uslugi, services photos, 4:3, 1920x1440.
 disable-model-invocation: true
 ---
 
@@ -29,23 +27,23 @@ disable-model-invocation: true
 ## Жёсткие правила брифа (не отменять)
 
 1. Папка синхронизируется с Яндекс.Диском; Авито к нему подключен в настройках автозагрузки.
-2. **Длинная ссылка (предпочтительна — стабильнее короткой):**
-   `https://cloud-api.yandex.net/v1/disk/resources/download?path=/AUTOZA/Foto_mebel_1/kuhni/heroes/{Id}.jpg`
+2. **Длинная ссылка (предпочтительна):**
+   `https://cloud-api.yandex.net/v1/disk/resources/download?path=/{DISK_ROOT}/{niche}/heroes/{Id}.jpg`
    Короткая `yandex_disk://...` допустима по инструкции Авито, но в пайплайне **не использовать**, если пользователь просит длинную.
 3. В ячейке ImageUrls: `url1 | url2 | ...` (пробел-пайп-пробел). При URL **ImageNames не заполнять**.
-4. Фото **по смыслу** категории (кухни→`kuhni`, шкафы→`wardrobes`). Не смешивать.
-5. Папки и path — **ASCII/EN** (`kuhni`, `wardrobes`, `sets`, `heroes`), без кириллицы в path.
+4. Фото **по смыслу** кластера/категории. Не смешивать нес related в одном сете.
+5. Папки и path — **ASCII/EN** (`sets`, `heroes`, `{niche-slug}`), без кириллицы в path.
 6. Уже **активные** объявления — фото/ImageUrls не менять без явного запроса; у **новых** — менять.
 7. Первые фото у объявлений **разные** (не один файл lead на всех).
 8. Кадры для Авито — **4:3**, целевой размер **1920×1440**.
 
 ### Корень на Диске
 
-Актуальный проект: **`/AUTOZA/Foto_mebel_1`**  
-(старый шаблон `/AUTOZA/Foto_mebel` — только если пользователь явно указал другой корень).
+**`DISK_ROOT`** — из брифа (напр. `/AUTOZA/Brand_photos`). Локальная папка зеркалит path.
 
-UI Диска: `https://disk.yandex.ru/client/disk/AUTOZA/Foto_mebel_1`  
-Локальная папка проекта должна зеркалить структуру path на Диске.
+Примеры веток:
+- **Товары:** `{niche-a}/`, `{niche-b}/` (отдельные product-кластеры)
+- **Услуги:** `uslugi/` или `services/` → [references/services-photos.md](references/services-photos.md)
 
 Подробности URL: [references/yandex-disk-urls.md](references/yandex-disk-urls.md).
 
@@ -61,12 +59,14 @@ UI Диска: `https://disk.yandex.ru/client/disk/AUTOZA/Foto_mebel_1`
 | Safe-zone текста | центр **1300×1300** — **весь** текстовый блок строго внутри |
 | Объект в кадре | **60–80%** (товар виден; текст не перекрывает фасады целиком) |
 | Оверлей (плашка+текст) | **10–25%** площади кадра **по композиции** (не «тонкая полоска») |
-| Кегль @1920 | хук **~62–110 px**, выгода **~40–64 px** — читается с телефона |
+| Кегль @1920 | hero хук **88–92 px**, выгода **52–56 px**, CTA **48–50 px**; слайды 2–4: **76–88 px** |
 | Кол-во в объявлении | **4–10** (дефолт сетов = **4**; добить до 10 при наличии кадров) |
 
 **Мобилка / CTR:** если хук не читается в превью 1:1 на телефоне — оверлей бракованный. Плашка у самого края кадра вне safe-zone — брак.
 
-Мебель: **в интерьере**; обложка = готовый результат, не визитка/прайс/коллаж.
+Обложка = **готовый результат** или сильный оффер; не прайс/коллаж/абстрактная текстура.
+
+**Hero-текст:** короткий **хук** (3–6 слов), не полный Title. CTA третьей строкой. См. [references/overlay-hooks.md](references/overlay-hooks.md).
 
 Подробности: [references/ctr-overlays-4x3.md](references/ctr-overlays-4x3.md).
 
@@ -74,7 +74,7 @@ UI Диска: `https://disk.yandex.ru/client/disk/AUTOZA/Foto_mebel_1`
 
 ## Режим C — сеты + уникальные heroes (основной для массовых фидов)
 
-Проверенный пайплайн Foto_mebel_1 / Мебель Алирис: **10 смысловых сетов × 4 кадра**, затем на каждое объявление — **свой hero** + хвост из сета по кругу.
+Проверенный пайплайн: **10 смысловых сетов × 4 кадра**, затем на объявление — **свой hero** + хвост из сета.
 
 ```
 Task Progress:
@@ -90,21 +90,10 @@ Task Progress:
 ### Структура папок
 
 ```text
-{project}/
-  kuhni/
-    sets/
-      set-01-{slug}/
-        raw-01-hero.jpg      # без оверлея (база для штампа)
-        01-hero.jpg          # сет-оверлей (опц.)
-        02-angle.jpg
-        03-detail.jpg
-        04-fomo.jpg          # CTA: «Пришлите размеры» / «Расчёт сегодня»
-      set-02-...
-    heroes/
-      {Id}.jpg               # уникальная обложка объявления
-  wardrobes/
-    sets/ ...
-    heroes/ ...
+{DISK_ROOT}/
+  {niche}/                 # uslugi | kuhni | wardrobes | {slug}
+    sets/set-01-{slug}/…
+    heroes/{Id}.jpg
 ```
 
 Смысл сетов (пример кухонь): фикс.цена, 3D24, студия, угловая, производство, потолок, модуль, без роста цены, под ключ, 2 м — см. план проекта `output/images/SETS-PLAN.md` если есть.
@@ -113,10 +102,10 @@ Task Progress:
 
 1. Взять `Id`, `Title` (и при необходимости Description) с листа.
 2. `set_index = (порядковый_номер_новой_строки - 1) % 10` → `set-01` … `set-10` по кругу.
-3. **Фото 1 (lead):** из `sets/{set}/raw-01-hero.jpg` нарисовать оверлей:
-   - строка 1 = **Title** объявления (читаемо, truncate умно ~48 символов);
-   - строка 2 = USP сета или короткая характеристика из описания;
-   - плашка внутри safe-zone 1300×1300, контраст высокий;
+3. **Фото 1 (lead):** из `raw-01-hero.jpg` оверлей по [overlay-hooks.md](references/overlay-hooks.md):
+   - строка 1 = **хук** (из Title, 3–6 слов);
+   - строка 2 = USP сета;
+   - строка 3 = CTA («Напишите — посчитаем»);
    - сохранить в `{kind}/heroes/{Id}.jpg`.
 4. **Фото 2–4:** `02-angle.jpg`, `03-detail.jpg`, `04-fomo.jpg` того же сета (общие файлы — ок).
 5. При необходимости **5–10:** добор других ракурсов/сетов той же категории **без** повтора lead; уникальность наборов усиливать вариацией сета + hero.
@@ -157,12 +146,12 @@ Task Progress:
 - [ ] Нет одного first на всю категорию
 ```
 
-1. Корень фото + Excel; корень path = `/AUTOZA/Foto_mebel_1` (или иной по брифу).
+1. Корень фото + Excel; **маппинг колонок по header row** (услуги: ImageUrls часто col 5, не 8).
 2. RU-папки → EN.
 3. Маппинг по смыслу (`kuhni`, `wardrobes`, …).
 4. Новые строки: **разные** lead; предпочтительно `heroes/{Id}.jpg`, иначе цикл по файлам папки.
 5. Статус **Активно** / не-новые ID — skip.
-6. Услуги — не трогать без запроса.
+6. **Услуги** — ветка `uslugi/`; см. [services-photos.md](references/services-photos.md).
 7. Проверка unique firsts.
 
 Валидатор скилла: `scripts/validate_image_urls.py` (`--expect 4` или `10`).
@@ -186,7 +175,7 @@ Task Progress:
 
 ### B1 — оверлей
 
-1. ЦА + заголовок/оффер из **строки объявления** (для hero) или USP сета (для общих кадров 1–3).
+1. Хук из строки объявления (**не** полный Title на hero) — [overlay-hooks.md](references/overlay-hooks.md).
 2. Хук короткий + опц. выгода; без бан-листа.
 3. Весь текст и плашка — **только внутри** safe-zone 1300×1300.
 4. Площадь плашки+текста = **10–25%** кадра (типично 15–20% для мебели). Не тонкая полоска ~5–8%.
@@ -227,7 +216,8 @@ Task Progress:
 
 ## Дополнительно
 
-- [references/rules-audit.md](references/rules-audit.md) — что из файла правил принято/отклонено
+- [references/overlay-hooks.md](references/overlay-hooks.md) — хук + CTA, кегли, anti-patterns
+- [references/services-photos.md](references/services-photos.md) — услуги / uslugi
 - [references/yandex-disk-urls.md](references/yandex-disk-urls.md)
 - [references/ctr-overlays-4x3.md](references/ctr-overlays-4x3.md)
 - [references/examples.md](references/examples.md)
