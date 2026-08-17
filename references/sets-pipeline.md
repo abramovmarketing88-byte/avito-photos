@@ -27,6 +27,14 @@
 - [ ] Диск привязан в автозагрузке Авито
 - [ ] `validate_image_urls.py --expect 4` → OK, unique_firsts высокий
 
+## 4a. Storyline (услуги, режим D)
+
+Если не 10×4, а **темы × 5 кадров** — см. [storyline-sets.md](storyline-sets.md).
+
+- [ ] Люди на всех кадрах (reference photos клиента)
+- [ ] Имена файлов = `THEME_SETS` в assign-скрипте
+- [ ] Pre-launch: синк Яндекс.Диска — [prelaunch-checklist.md](prelaunch-checklist.md)
+
 ## 4. Если нужно ровно 10 фото
 
 Добить URL 5–10 из других ракурсов той же категории / соседних сетов, **не** меняя unique lead (`heroes/{Id}.jpg`).

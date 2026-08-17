@@ -189,6 +189,37 @@ Task Progress:
 2. Сгенерировать; иначе — crop в 4:3 без stretch + лёгкая ЦК.
 3. В EN-папку сета (`raw-01-hero.jpg` и ракурсы) → режим C.
 
+**После AI-генерации (обязательно):** выход часто **не 4:3** (напр. 1536×1024). Center-crop до 4:3 → resize **1920×1440** (LANCZOS), без stretch.
+
+### B2 — услуги: живой человек (не заглушка)
+
+Для бухгалтерии, юристов, консалтинга, медицины и т.п.:
+
+| Правило | Детали |
+|---------|--------|
+| **Лицо на кадре** | Hero и слайды 2–5 — **живой эксперт/лицо бренда**, не абстрактный фон |
+| **Запрет** | PIL/gradient-only слайды **без людей** = брак (даже с CTR-текстом) |
+| **Референс** | Фото клиента из брифа → `reference_image_paths` при генерации; сохранять узнаваемое лицо |
+| **Стиль** | Мягкий дневной свет, офис/интерьер, «живое» фото, не stock-watermark |
+| **Объект** | Человек **40–60%** кадра; текст в safe-zone, лицо не закрывать целиком |
+| **PDF/референсы** | Если в PDF-сторитейле люди — в генерации **тоже люди**, не вырезать |
+
+Подробности: [references/services-photos.md](references/services-photos.md), storyline: [references/storyline-sets.md](references/storyline-sets.md).
+
+### Режим D — storyline sets (услуги, 3×5)
+
+Когда в брифе **темы × слайды** (PDF-сторитейл), а не 10×4:
+
+- **3–N тем** (`marketplaces`, `construction`, `general`…) × **4–5 кадров** (`01-hero` … `05-cta`)
+- Тема строки — по keywords Title / winners-matrix / `theme` в report JSON
+- **Hero per Id:** оверлей(hook + USP темы + CTA) поверх `01-hero` с человеком
+- Имена файлов сета **1:1** с `THEME_SETS` в скрипте assign (напр. `02-report.jpg`, не `02-support.jpg`)
+- ImageUrls: hero | 02…05 (без дубля 01-hero в хвосте)
+
+При **перегенерации** фото: старые `cloud-api` URL с тем же `DISK_ROOT/{niche}/` — **заменить**, не только дописать (избежать дублей в ячейке).
+
+**Смешанные URL:** если сохраняем старые `http://avito.ru/autoload/…` — валидатор скилла может ругаться; это **ок**, если сохранение старых фото намеренное.
+
 ### Запреты оверлея / модерация
 
 - Контакты, QR, сайты, чужие стоки и логотипы
@@ -214,11 +245,26 @@ Task Progress:
 
 Отчёт: путь Excel, N строк, unique firsts, размер кадров (1920×1440), корень Диска, число URL на строку (4 или 10), папки EN.
 
+## Pre-launch (перед автозагрузкой)
+
+```
+Task Progress:
+- [ ] Яндекс.Диск синхронизирован (локальная папка = path в URL)
+- [ ] disk_jpgs ≈ sets + heroes (проверка count на диске)
+- [ ] Кадры 1920×1440, 4:3; на услугах — люди на hero/слайдах
+- [ ] Активные AvitoId: ImageUrls не менялись (или явный override в брифе)
+- [ ] unique firsts ≈ числу объявлений на листе
+```
+
+См. [references/prelaunch-checklist.md](references/prelaunch-checklist.md).
+
 ## Дополнительно
 
 - [references/overlay-hooks.md](references/overlay-hooks.md) — хук + CTA, кегли, anti-patterns
-- [references/services-photos.md](references/services-photos.md) — услуги / uslugi
+- [references/services-photos.md](references/services-photos.md) — услуги / uslugi, живой эксперт
+- [references/storyline-sets.md](references/storyline-sets.md) — режим D, 3×5, темы
 - [references/yandex-disk-urls.md](references/yandex-disk-urls.md)
 - [references/ctr-overlays-4x3.md](references/ctr-overlays-4x3.md)
 - [references/examples.md](references/examples.md)
 - [references/sets-pipeline.md](references/sets-pipeline.md) — чеклист сетов + heroes
+- [references/prelaunch-checklist.md](references/prelaunch-checklist.md) — перед запуском фида
