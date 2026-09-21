@@ -47,3 +47,14 @@ https://cloud-api.yandex.net/v1/disk/resources/download?path=/AUTOZA/Foto_mebel_
 **Промпт:** matte anthracite handleless kitchen, oak worktop, LED under cabinets, herringbone floor, photoreal, horizontal 4:3, 1920x1440, no watermark no logo, leave lower center for text
 
 Сохранить как `raw-01-hero.jpg` в сет → штамп heroes в режиме C.
+
+## Пример 5 — архив (режим F)
+
+**Вход:** 20 объявлений, Диск не подключён; бриф: «загрузить фото архивом».
+
+**Действия:**
+1. Кадры 1920×1440 → staging без подпапок: `ad-001-01.jpg` … `ad-001-04.jpg`, …
+2. `cd staging && zip ../photos.zip *.jpg` (не `zip -r staging/`).
+3. ImageNames: `ad-001-01.jpg | ad-001-02.jpg | ad-001-03.jpg | ad-001-04.jpg`; ImageUrls пусто.
+4. Проверить `photos.zip` + xlsx ≤ 100 МБ; загрузить оба файла в автозагрузку.
+

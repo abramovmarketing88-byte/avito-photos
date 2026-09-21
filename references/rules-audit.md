@@ -89,3 +89,49 @@
 | Режим **C**: 10 сетов × 4 + `heroes/{Id}.jpg` | Title из строки на lead; цикл сетов |
 | 4 URL дефолт (до 10 при доборе) | Не ломать фид из‑за «всегда ровно 10», если сетов 4 |
 | FOMO на 4-м кадре без «акция/скидка» | «Пришлите размеры», «Расчёт сегодня» |
+
+---
+
+## C2) Архив + ImageNames (инструкция Авито, 2026)
+
+Принято в скилл как **режим F** → [archive-upload.md](archive-upload.md). Дефолт массового фида не менять (остаётся ImageUrls).
+
+| Правило | Заметка |
+|---------|---------|
+| Продумать названия/нумерацию до архива | Удобный ImageNames |
+| Фото в ZIP **без папок** внутри | Не `zip -r folder/`; плоский корень |
+| ImageNames = имя с расширением (`Фото_1.jpg`) | Точное совпадение с файлом в ZIP |
+| Несколько имён — `\|` или перевод строки | В пайплайне предпочитать ` \| ` |
+| Архив загружать **вместе** с Excel | Один пакет автозагрузки |
+| Архив + Excel ≤ **100 МБ** | Крупный фид → оставаться на Диске/URL |
+| Не смешивать ImageUrls и ImageNames в одной строке | Взаимоисключение способов |
+
+---
+
+## D) avito-creative-art-director (2026)
+
+Впитано в скилл как **режим E** + references `meaning-strategy.md` / `creative-direction.md`. Production A/C/D не ослаблены.
+
+### Принято
+
+| Правило | Куда |
+|---------|------|
+| Смыслы из ЦА/болей; cover = search + pain/value | meaning-strategy; overlay-hooks |
+| Approve смыслов перед генерацией | только режим **E** и один раз при новых сетах/темах |
+| Text discipline: только approved / auto-hook текст | E + mass auto |
+| 3 равносильные standalone обложки; anti-collage | creative-direction; Mode E |
+| Стили Deep Contrast / Clean Minimalism / Dynamic Accent | creative-direction |
+| Carousel brand lock (Accent A, типографика warm-up) | creative-direction; storyline-sets |
+| Identity + body integrity; не закрывать лицо | creative-direction; services-photos |
+| CTA «Напишите / Позвоните / Напишите в чат»; не «в Авито» | meaning-strategy; overlay-hooks |
+| Preview readability / не у краёв | стык с safe-zone 1300×1300 |
+
+### Отклонено для массового C (намеренно)
+
+| Утверждение art-director | Вердикт |
+|--------------------------|---------|
+| Approve смыслов на **каждую** строку фида | Нет — убивает масштаб; auto-hook + USP сета |
+| Тяжёлая инфографика / 3D как must на каждом кадре | Опционально в E; в C — стабильный оверлей |
+| Нет жёстких px / 1920×1440 / ImageUrls | Production-стандарт photos обязателен после E (handoff) |
+| Короткие `yandex_disk://` / без EN-path | Не ослаблять: длинный cloud-api, ASCII path |
+| «Оставьте заявку» как CTA | Нет — whitelist photos |

@@ -34,12 +34,21 @@
 
 После генерации: **center-crop 4:3 → 1920×1440**.
 
+### Identity / тело (обязательно при людях)
+
+- Сохранять лицо, возраст, причёску, телосложение, позу, одежду; не redraw «похожего».
+- Не закрывать лицо текстом/графикой; текст в пустых зонах или над нижней частью кадра.
+- Не сжимать/растягивать тело ради текста — uniform scale или extend фона.
+- Cover energy выше; warm-up слайды спокойнее, но в одной visual system (Accent A) — [creative-direction.md](creative-direction.md).
+- Смыслы hook/USP: [meaning-strategy.md](meaning-strategy.md).
+
 ## Режимы
 
 | Режим | Когда | См. |
 |-------|-------|-----|
 | C | 10 сетов × 4, массовый фид | [sets-pipeline.md](sets-pipeline.md) |
 | D | Storyline: N тем × 4–5 кадров | [storyline-sets.md](storyline-sets.md) |
+| E | Премиум 1–N: смыслы + 3 обложки + карусель | SKILL.md Mode E |
 
 Подбор сета/темы по **title** строки (keywords), не только `% 10`.
 

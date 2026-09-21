@@ -32,6 +32,7 @@ yandex_disk://AUTOZA/Foto_mebel_1/kuhni/heroes/al-k2-1000.jpg
 - Разделитель: ` | ` (пробел, пайп, пробел)
 - Число URL: **4** (пайплайн сетов) или до **10**
 - **`ImageNames` / «Названия фото» — оставлять пустыми** при заполнении URL (инструкция Авито)
+- Альтернатива без Диска: режим **F** — ZIP + ImageNames, см. [archive-upload.md](archive-upload.md)
 
 ## Переименование папок RU → EN
 

@@ -14,8 +14,9 @@
 ## 2. На каждое объявление
 
 - [ ] Порядковый индекс строки → сет `n % 10` (цикл 1→10→1)
-- [ ] Hero из `raw-01-hero` + **Title** (+ USP сета / фраза из Description)
+- [ ] Hero из `raw-01-hero` + hook = search+pain из Title (не слепой truncate) + USP сета — [meaning-strategy.md](meaning-strategy.md)
 - [ ] Сохранить `heroes/{Id}.jpg`
+- [ ] При создании новых 10 сетов с нуля — один approve смыслов сетов (`SETS-PLAN.md`), не на каждый Id
 - [ ] ImageUrls = hero + 02 + 03 + 04 длинными URL
 - [ ] ImageNames очистить
 
